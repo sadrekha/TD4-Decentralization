@@ -6,13 +6,13 @@ import { webcrypto } from "crypto";
 
 // Function to convert ArrayBuffer to Base64 string
 function arrayBufferToBase64(buffer: ArrayBuffer): string {
-  return Buffer.from(buffer).toString("base64");
+    return Buffer.from(buffer).toString("base64");
 }
 
 // Function to convert Base64 string to ArrayBuffer
 function base64ToArrayBuffer(base64: string): ArrayBuffer {
-  var buff = Buffer.from(base64, "base64");
-  return buff.buffer.slice(buff.byteOffset, buff.byteOffset + buff.byteLength);
+    var buff = Buffer.from(base64, "base64");
+    return buff.buffer.slice(buff.byteOffset, buff.byteOffset + buff.byteLength);
 }
 
 // ################
@@ -32,7 +32,7 @@ export async function generateRsaKeyPair(): Promise<GenerateRsaKeyPair> {
             publicExponent: new Uint8Array([1, 0, 1]),
             hash: "SHA-256",
         },
-        true, // keys are extractable
+        true,
         ["encrypt", "decrypt"]
     );
     return keyPair as GenerateRsaKeyPair;
@@ -118,7 +118,7 @@ export async function rsaDecrypt(
 export async function createRandomSymmetricKey(): Promise<webcrypto.CryptoKey> {
     return await webcrypto.subtle.generateKey(
         { name: "AES-CBC", length: 256 },
-        true, // extractable
+        true,
         ["encrypt", "decrypt"]
     );
 }
@@ -147,7 +147,6 @@ export async function symEncrypt(
     key: webcrypto.CryptoKey,
     data: string
 ): Promise<string> {
-    // Generate a random 16-byte IV for AES-CBC.
     const iv = webcrypto.getRandomValues(new Uint8Array(16));
     const encoder = new TextEncoder();
     const encodedData = encoder.encode(data);
@@ -156,10 +155,8 @@ export async function symEncrypt(
         key,
         encodedData
     );
-    // Convert IV and ciphertext to base64.
     const ivBase64 = arrayBufferToBase64(iv.buffer.slice(iv.byteOffset, iv.byteOffset + iv.byteLength));
     const cipherBase64 = arrayBufferToBase64(encryptedBuffer);
-    // Concatenate with a colon delimiter.
     return ivBase64 + ":" + cipherBase64;
 }
 
